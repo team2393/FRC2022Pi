@@ -1,0 +1,16 @@
+{
+  "CameraPublisher": {
+    "Processed": {
+      "open": true
+    },
+    "open": true
+  },
+  "NetworkTables Settings": {
+    "dsClient": false,
+    "mode": "Client",
+    "serverTeam": "10.23.93.36"
+  },
+  "SmartDashboard": {
+    "open": true
+  }
+}
