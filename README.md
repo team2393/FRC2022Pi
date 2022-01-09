@@ -10,12 +10,13 @@ https://docs.wpilib.org/en/stable/docs/software/vision-processing/wpilibpi/index
 Build
 -----
 
-1) Setup via  `\Users\Public\wpilib\2-22\frccode\frcvars2022.bat`
-2) Cleanup via `gradlew.bat clean`
-3) Finally via `gradlew.bat build`
+1) Setup: `\Users\Public\wpilib\2022\frccode\frcvars2022.bat`
+2) Cleanup: `gradlew.bat clean`
+3) Finally build: `gradlew.bat build`
 
 When running gradle the first time, PC needs internet connection.
-Later re-builds can be done while on the robot wifi.
+Later re-builds can be done while on the robot wifi,
+sand just `gradlew.bat build` tends to suffice.
 
 Deploy
 ------
