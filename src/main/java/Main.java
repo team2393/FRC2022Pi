@@ -35,7 +35,7 @@ public final class Main
     // address of the Pi (10.23.93.36).
     // When running with robot, disable 'server' mode,
     // and we'll use the network tables on the roboRIO.
-    public static final boolean server = true;
+    public static final boolean server = false;
     public static final int width = 320, height = 240, fps = 30;
 
     /** Connect to the web port of the RIO

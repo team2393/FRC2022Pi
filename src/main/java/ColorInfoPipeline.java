@@ -118,11 +118,11 @@ public class ColorInfoPipeline implements VisionPipeline
     SmartDashboard.putNumber("Center H", center_h);
     SmartDashboard.putNumber("Center S", center_s);
     SmartDashboard.putNumber("Center V", center_v);
-    final String info = String.format("# %3d BGR %3d %3d %3d HSV %3d %3d %3d",
+    final String info = String.format("# %3d RGB %3d %3d %3d HSV %3d %3d %3d",
                                       calls.incrementAndGet(),
-                                      center_b,
-                                      center_g,
                                       center_r,
+                                      center_g,
+                                      center_b,
                                       center_h,
                                       center_s,
                                       center_v);

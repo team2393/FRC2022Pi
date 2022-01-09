@@ -21,7 +21,7 @@ sand just `gradlew.bat build` tends to suffice.
 Deploy
 ------
 
-On robot wifi, open the rPi web dashboard via http://10.23.93.36.
+On robot wifi, open the rPi web dashboard via http://wpilibpi.local or http://10.23.93.36
 
 1) Make the rPi writable by selecting the "Writable" tab
 2) In the rPi web dashboard Application tab, select the "Uploaded Java jar"
@@ -36,7 +36,7 @@ enabling console output in the Vision Status tab.
 View
 ----
 
- * Original camera image with controls: http://10.23.93.36:1181/
+ * Original camera image with controls: http://wpilibpi.local:1181 or http://10.23.93.36:1181/
  * Processed image: http://10.23.93.36:1182/
  * Just the processed stream: http://10.23.93.36:1182/stream.mjpg
 
