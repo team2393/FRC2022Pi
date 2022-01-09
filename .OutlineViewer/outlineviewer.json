@@ -5,10 +5,16 @@
     },
     "open": true
   },
+  "FMSInfo": {
+    "open": true
+  },
+  "LiveWindow": {
+    "open": true
+  },
   "NetworkTables Settings": {
     "dsClient": false,
     "mode": "Client",
-    "serverTeam": "10.23.93.36"
+    "serverTeam": "2393"
   },
   "SmartDashboard": {
     "open": true
