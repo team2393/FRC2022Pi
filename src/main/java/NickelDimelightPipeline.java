@@ -24,7 +24,7 @@ public class NickelDimelightPipeline extends ColorInfoPipeline
     {
         prepare(frame);
 
-        // TODO Filter on HSV
+        // TODO Filter on HSV threshold
 
         // TODO Filter on contour's area
 
