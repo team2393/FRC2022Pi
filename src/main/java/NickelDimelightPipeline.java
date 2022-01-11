@@ -9,7 +9,6 @@ import edu.wpi.cscore.CvSource;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.opencv.core.Core;
@@ -26,18 +25,17 @@ import org.opencv.core.Rect;
  */
 public class NickelDimelightPipeline extends ColorInfoPipeline
 {
-    // Hue (0-180), Luminance (0-255), Saturation (0-255) filter
-    // In principle looking for 'green' light, hue ~ 75
-    // but biggest emphasis is on 'bright'.
-    private final Scalar hsv_min = new Scalar( 75-20,  30.0,  50.0);
-    private final Scalar hsv_max = new Scalar( 75+20, 255.0, 255.0);
+    /** Hue (0-180), Luminance (0-255), Saturation (0-255) filter */
+    private final Scalar hsv_min = new Scalar( 75-20,  30.0,  50.0),
+                         hsv_max = new Scalar( 75+20, 255.0, 255.0);
 
     /** HSV - filtered version of current frame */
     protected final Mat filt = new Mat();
 
+    /** Detected contours */
     private final List<MatOfPoint> contours = new ArrayList<>();
 
-    /** Temporary data for contours */
+    /** Temporary data for contour filter */
     protected final Mat tmp = new Mat();
 
     NickelDimelightPipeline(final CvSource output, final int width, final int height)
@@ -77,7 +75,7 @@ public class NickelDimelightPipeline extends ColorInfoPipeline
         contours.clear();
         Imgproc.findContours(filt, contours, tmp, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
-         // Get largest contour
+        // Get largest contour
         int largest_contour_index = -1;
         double largest_area = SmartDashboard.getNumber("AreaMin", 0.0);
         final double area_max = SmartDashboard.getNumber("AreaMax", width * height);
@@ -88,6 +86,7 @@ public class NickelDimelightPipeline extends ColorInfoPipeline
         for (int i=0; i<contours.size(); ++i)
         {
             final MatOfPoint contour = contours.get(i);
+
             // Filter on contour's area
             final double area = Imgproc.contourArea(contour);
             if (area < largest_area  ||  area > area_max)
@@ -118,14 +117,9 @@ public class NickelDimelightPipeline extends ColorInfoPipeline
             // Show largest contour
             Imgproc.drawContours(frame, contours, largest_contour_index, overlay_bgr);
 
-            final MatOfPoint largest_contour = contours.get(largest_contour_index);
             // Arrow from mid-bottom of image to center of blob
-            Rect bounds = Imgproc.boundingRect(largest_contour);
-            // Imgproc.rectangle(frame,
-            //                   new Point(largest.x*scale, largest.y*scale),
-            //                   new Point((largest.x + largest.width)*scale,
-            //                             (largest.y + largest.height)*scale),
-            //                  overlay_bgr);
+            final MatOfPoint largest_contour = contours.get(largest_contour_index);
+            final Rect bounds = Imgproc.boundingRect(largest_contour);
             final int horiz_pos = bounds.x + bounds.width/2;
             final int vert_pos  = bounds.y + bounds.height/2;
             Imgproc.arrowedLine(frame,
