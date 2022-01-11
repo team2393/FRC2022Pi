@@ -233,7 +233,8 @@ public final class Main
         SmartDashboard.setDefaultBoolean("Camera Target Mode", !target_mode.get());
 
         // TODO Select a pipeline to process the image
-        final ColorInfoPipeline my_pipeline = new ColorInfoPipeline(processed, width, height);
+        // final ColorInfoPipeline my_pipeline = new ColorInfoPipeline(processed, width, height);
+        final NickelDimelightPipeline my_pipeline = new NickelDimelightPipeline(processed, width, height);
 
         System.out.println("** Pipeline: " + my_pipeline.getClass().getName());
 

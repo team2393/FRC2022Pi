@@ -21,15 +21,11 @@ import org.opencv.imgproc.Imgproc;
 /** Pipeline that provides info about color in center of image */
 public class ColorInfoPipeline implements VisionPipeline
 {
-    /** Scaling factor for reduced size of processed image */
-    public static final int scale = 2;
-
     protected final CvSource output;
-    protected final int width, height, proc_width, proc_height;
+    protected final int width, height;
 
     // Intermediate images used for pre-processing
-    private final Mat small = new Mat(),
-                      norm = new Mat(),
+    private final Mat norm = new Mat(),
                       blur = new Mat();
     
     /** HSV version of current frame */
@@ -52,8 +48,6 @@ public class ColorInfoPipeline implements VisionPipeline
         this.output = output;
         this.width = width;
         this.height = height;
-        proc_width = width / scale;
-        proc_height = height / scale;
     }
 
     /** Pre-process the frame
@@ -74,11 +68,8 @@ public class ColorInfoPipeline implements VisionPipeline
         // but within one process call always using it for the
         // same purpose.
 
-        // Resize to use less CPU & memory to process 
-        Imgproc.resize(frame, small, new Size(proc_width, proc_height));
-        
         // Scale colors to use full 0..255 range in case image was dark
-        Core.normalize(small, norm, 0.0, 255.0, Core.NORM_MINMAX);
+        Core.normalize(frame, norm, 0.0, 255.0, Core.NORM_MINMAX);
 
         // When moving the camera, or turning auto-focus off and de-focusing,
         // we would detect the target, but when standing still and in perfect focus,
@@ -99,11 +90,11 @@ public class ColorInfoPipeline implements VisionPipeline
         for (int x=-1; x<=1; ++x)
             for (int y=-1; y<=1; ++y)
             {
-                norm.get(proc_height/2 + x, proc_width/2 + y, probe);
+                norm.get(height/2 + x, width/2 + y, probe);
                 center_b += Byte.toUnsignedInt(probe[0]);
                 center_g += Byte.toUnsignedInt(probe[1]);
                 center_r += Byte.toUnsignedInt(probe[2]);
-                hsv.get(proc_height/2 + x, proc_width/2 + y, probe);
+                hsv.get(height/2 + x, width/2 + y, probe);
                 center_h += Byte.toUnsignedInt(probe[0]);
                 center_s += Byte.toUnsignedInt(probe[1]);
                 center_v += Byte.toUnsignedInt(probe[2]);
