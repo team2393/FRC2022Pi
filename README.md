@@ -10,6 +10,11 @@ https://docs.wpilib.org/en/stable/docs/software/vision-processing/wpilibpi/index
 Build
 -----
 
+While you can open the FRC2022Pi folder in VS Code for editing,
+there is no 'build' or 'deploy' button.
+You need to open a `cmd.exe` window,
+`cd \Users\YOUR_NAME\git\FRC2022Pi` and then invoke `make.bat`,
+which basically does this:
 1) Setup: `\Users\Public\wpilib\2022\frccode\frcvars2022.bat`
 2) Cleanup: `gradlew.bat clean`
 3) Finally build: `gradlew.bat build`
