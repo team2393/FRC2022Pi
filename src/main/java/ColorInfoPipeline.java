@@ -5,25 +5,18 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import edu.wpi.cscore.CvSource;
-import edu.wpi.first.vision.VisionPipeline;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 /** Pipeline that provides info about color in center of image */
-public class ColorInfoPipeline implements VisionPipeline
+public class ColorInfoPipeline extends PlainCopyPipeline
 {
-    protected final CvSource output;
-    protected final int width, height;
-
     // Intermediate images used for pre-processing
     private final Mat norm = new Mat(),
                       blur = new Mat();
@@ -37,17 +30,9 @@ public class ColorInfoPipeline implements VisionPipeline
     /** HSV at center of image */
     protected int center_h = 0, center_s = 0, center_v = 0;
 
-    /** Counter for calls to `process()` */
-    protected AtomicInteger calls = new AtomicInteger();
-
-    /** Colors for drawing overlay */
-    protected final Scalar overlay_bgr = new Scalar(200.0, 100.0, 255.0), contrast_bgr = new Scalar(0, 0, 0);
-
     ColorInfoPipeline(final CvSource output, final int width, final int height)
     {
-        this.output = output;
-        this.width = width;
-        this.height = height;
+        super(output, width, height);
     }
 
     /** Pre-process the frame
@@ -119,29 +104,6 @@ public class ColorInfoPipeline implements VisionPipeline
                           new Point(width/2 - 2, height/2 - 2),
                           new Point(width/2 + 2, height/2 + 2),
                           overlay_bgr);
-    }
-
-    /** Show info at bottom of image.
-     *  @param frame Where to show the info
-     *  @param info Info text to show
-     */
-    protected void showInfo(final Mat frame, final String info)
-    {
-        // Paint it twice, overlay-on-black, for better contrast
-        Imgproc.putText(frame,
-                        info,
-                        new Point(1, height-16),
-                        Core.FONT_HERSHEY_SIMPLEX,
-                        0.4,
-                        contrast_bgr,
-                        1);
-        Imgproc.putText(frame,
-                        info,
-                        new Point(2, height-15),
-                        Core.FONT_HERSHEY_SIMPLEX,
-                        0.4,
-                        overlay_bgr,
-                        1);
     }
 
     @Override
