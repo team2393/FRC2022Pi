@@ -22,6 +22,8 @@ import org.opencv.core.Rect;
 /** Pipeline for a Nickel-and-Dimelight 
  *  
  *  Detects features via HSV and shape thresholding
+ * 
+ *  See https://en.wikipedia.org/wiki/HSL_and_HSV
  */
 public class NickelDimelightPipeline extends ColorInfoPipeline
 {
