@@ -71,13 +71,21 @@ public class NickelDimelightPipeline extends ColorInfoPipeline
         hsv_max.val[1] = SmartDashboard.getNumber("SatMax", hsv_max.val[1]);
         hsv_min.val[2] = SmartDashboard.getNumber("ValMin", hsv_min.val[2]);
         hsv_max.val[2] = SmartDashboard.getNumber("ValMax", hsv_max.val[2]);
-        // Core.inRange(..) simply checks if the hue, sat and value is
-        // between the respective min and max.
-        // Hue values, however, have a range of 0..180 with 'red' both at 0 and 180.
+
+        // The OpenCV hue range is
+        // red    green     blue     red
+        // 0.......70........120.....180
+        //
+        // If we want 'green', we can use a hue min..max of say 60..80.
+        // But if we want 'red', we really need to check both 0..10 and 170..180.
+        //
+        // Support that by allowing min=170, max=10,
+        // detecting the wraparound at 180 if min > max.
         if (hsv_min.val[0] <= hsv_max.val[0])
         {
             // If we want a red range of 0..10, that's fine.
             // So is a red range of 170..180.
+            // Or 10..170 to get all colors except red.
             Core.inRange(hsv, hsv_min, hsv_max, filt);
         }
         else
