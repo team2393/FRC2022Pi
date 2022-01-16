@@ -32,7 +32,7 @@ public class NickelDimelightPipeline extends ColorInfoPipeline
                          hsv_max = new Scalar( 75+20, 255.0, 255.0);
 
     /** HSV - filtered version of current frame */
-    protected final Mat filt = new Mat();
+    protected final Mat filt1 = new Mat(), filt2 = new Mat(), filt = new Mat();
 
     /** Detected contours */
     private final List<MatOfPoint> contours = new ArrayList<>();
@@ -71,7 +71,39 @@ public class NickelDimelightPipeline extends ColorInfoPipeline
         hsv_max.val[1] = SmartDashboard.getNumber("SatMax", hsv_max.val[1]);
         hsv_min.val[2] = SmartDashboard.getNumber("ValMin", hsv_min.val[2]);
         hsv_max.val[2] = SmartDashboard.getNumber("ValMax", hsv_max.val[2]);
-        Core.inRange(hsv, hsv_min, hsv_max, filt);
+        // Core.inRange(..) simply checks if the hue, sat and value is
+        // between the respective min and max.
+        // Hue values, however, have a range of 0..180 with 'red' both at 0 and 180.
+        if (hsv_min.val[0] <= hsv_max.val[0])
+        {
+            // If we want a red range of 0..10, that's fine.
+            // So is a red range of 170..180.
+            Core.inRange(hsv, hsv_min, hsv_max, filt);
+        }
+        else
+        {
+            // But if we want a range of say 170..10, 'wrapping around' the 180 degree point,
+            // we need to check this in two steps
+            double hue_min = hsv_min.val[0];
+            double hue_max = hsv_max.val[0];
+
+            // Check 0 .. 10
+            hsv_min.val[0] = 0.0;
+            hsv_max.val[0] = hue_max;
+            Core.inRange(hsv, hsv_min, hsv_max, filt1);
+
+            // Check 170..180
+            hsv_min.val[0] = hue_min;
+            hsv_max.val[0] = 180.0;
+            Core.inRange(hsv, hsv_min, hsv_max, filt2);
+
+            // Add the result of 0..10 and 170..180
+            Core.add(filt1, filt2, filt);
+
+            // Restore limits "170..10"
+            hsv_min.val[0] = hue_min;
+            hsv_max.val[0] = hue_max;
+        }
 
         // Find contours
         contours.clear();
