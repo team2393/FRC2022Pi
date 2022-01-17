@@ -72,8 +72,8 @@ public class NickelDimelightPipeline extends ColorInfoPipeline
             // Reset button
             SmartDashboard.putBoolean("SetHSV", false);
 
-            SmartDashboard.putNumber("HueMin", Math.IEEEremainder(center_h-10 + 180.0, 180.0));
-            SmartDashboard.putNumber("HueMax", Math.IEEEremainder(center_h+10, 180.0));
+            SmartDashboard.putNumber("HueMin", (center_h-10 + 180.0) % 180.0);
+            SmartDashboard.putNumber("HueMax", (center_h+10) % 180.0);
             SmartDashboard.putNumber("SatMin", Math.max(0, center_s-10));
             SmartDashboard.putNumber("SatMax", Math.min(center_s+10, 255));
             SmartDashboard.putNumber("ValMin", Math.max(0, center_v-10));
