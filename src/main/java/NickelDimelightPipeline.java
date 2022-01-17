@@ -57,12 +57,29 @@ public class NickelDimelightPipeline extends ColorInfoPipeline
         SmartDashboard.setDefaultNumber("AspectMax", 20);
         SmartDashboard.setDefaultNumber("FullnessMin", 0.0);
         SmartDashboard.setDefaultNumber("FullnessMax", 100.0);
+
+        SmartDashboard.setDefaultBoolean("SetHSV", false);
     }
     
     @Override
     public void process(final Mat frame)
     {
         prepare(frame);
+
+        // Get snapshot of HSV in center?
+        if (SmartDashboard.getBoolean("SetHSV", false))
+        {
+            // Reset button
+            SmartDashboard.putBoolean("SetHSV", false);
+
+            SmartDashboard.putNumber("HueMin", Math.IEEEremainder(center_h-10 + 180.0, 180.0));
+            SmartDashboard.putNumber("HueMax", Math.IEEEremainder(center_h+10, 180.0));
+            SmartDashboard.putNumber("SatMin", Math.max(0, center_s-10));
+            SmartDashboard.putNumber("SatMax", Math.min(center_s+10, 255));
+            SmartDashboard.putNumber("ValMin", Math.max(0, center_v-10));
+            SmartDashboard.putNumber("ValMax", Math.min(center_s+10, 255));
+        }
+
 
         // Filter on Hue, Saturation and value
         hsv_min.val[0] = SmartDashboard.getNumber("HueMin", hsv_min.val[0]);
