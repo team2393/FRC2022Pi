@@ -7,6 +7,8 @@
 
 import edu.wpi.cscore.CvSource;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.camera.UDPServer;
+import frc.robot.camera.VisionData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,9 +42,17 @@ public class NickelDimelightPipeline extends ColorInfoPipeline
     /** Temporary data for contour filter */
     protected final Mat tmp = new Mat();
 
-    NickelDimelightPipeline(final CvSource output, final int width, final int height)
+    /** Vision data that we send via UDP */
+    private final VisionData vision_data = new VisionData();
+
+    /** UDP server used to send vision data */
+    private final UDPServer udp_server;
+
+    NickelDimelightPipeline(final CvSource output, final int width, final int height) throws Exception
     {
         super(output, width, height);
+
+        udp_server = new UDPServer();
 
         // Put initial values on dashboard
         SmartDashboard.setDefaultNumber("HueMin", hsv_min.val[0]);
@@ -198,7 +208,11 @@ public class NickelDimelightPipeline extends ColorInfoPipeline
             final int distance = height/2 - vert_pos;
             SmartDashboard.putNumber("Direction", direction);
             SmartDashboard.putNumber("Distance", distance);
-            // TODO Send info? udp.send(direction, distance);
+
+            // Send info ASAP via UDP
+            vision_data.direction = direction;
+            vision_data.distance = distance;
+            udp_server.send(vision_data);
 
             SmartDashboard.putNumber("Area", largest_area);    
 
@@ -214,8 +228,11 @@ public class NickelDimelightPipeline extends ColorInfoPipeline
             SmartDashboard.putNumber("Distance", 0);
             SmartDashboard.putNumber("Area", 0);    
             SmartDashboard.putNumber("Fullness", -1);    
-            SmartDashboard.putNumber("Aspect", -1);    
-            // udp.send(0, 0);
+            SmartDashboard.putNumber("Aspect", -1);   
+
+            // Send info ASAP via UDP
+            vision_data.clear();
+            udp_server.send(vision_data);
         }
 
         final String info = String.format("# %3d HSV %3d %3d %3d",
