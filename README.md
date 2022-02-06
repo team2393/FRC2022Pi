@@ -7,6 +7,13 @@ Prepare Pi
 .. with WPILib image as per
 https://docs.wpilib.org/en/stable/docs/software/vision-processing/wpilibpi/index.html
 
+Network Config
+--------------
+
+The rPi should be accessible as http://wpilibpi.local or `ssh pi@wpilibpi.local` (password `raspberry`)
+with an IP address assigned by the robot radio's DHCP, but for reliability we
+set a fixed address of 10.23.93.36 via the network tab on http://wpilibpi.local
+
 Build
 -----
 
