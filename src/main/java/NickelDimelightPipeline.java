@@ -14,8 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -67,6 +69,7 @@ public class NickelDimelightPipeline extends ColorInfoPipeline
         SmartDashboard.setDefaultNumber("AspectMax", 20);
         SmartDashboard.setDefaultNumber("FullnessMin", 0.0);
         SmartDashboard.setDefaultNumber("FullnessMax", 100.0);
+        SmartDashboard.setDefaultNumber("CircularityMin", 0.0);
 
         SmartDashboard.setDefaultBoolean("SetHSV", false);
     }
@@ -152,6 +155,8 @@ public class NickelDimelightPipeline extends ColorInfoPipeline
         final double aspect_max = SmartDashboard.getNumber("AspectMax", 20);
         final double fullness_min = SmartDashboard.getNumber("FullnessMin", 0.0);
         final double fullness_max = SmartDashboard.getNumber("FullnessMax", 100.0);
+        final double circularity_min = SmartDashboard.getNumber("CircularityMin", 0.0);
+
         for (int i=0; i<contours.size(); ++i)
         {
             final MatOfPoint contour = contours.get(i);
@@ -160,7 +165,7 @@ public class NickelDimelightPipeline extends ColorInfoPipeline
             final double area = Imgproc.contourArea(contour);
             if (area < largest_area  ||  area > area_max)
                 continue;
-            
+                        
             // Filter on aspect ratio 0 (tall) .. 1 (square) .. 20 (wide)
             final Rect bounds = Imgproc.boundingRect(contour);
             final double aspect = (double)bounds.width / bounds.height;
@@ -171,7 +176,25 @@ public class NickelDimelightPipeline extends ColorInfoPipeline
             final double fullness = 100.0 * area / (bounds.width * bounds.height);
             if (fullness < fullness_min  ||  fullness > fullness_max)
                 continue;
-                
+
+            // Perimeter
+            final MatOfPoint2f contour2f = new MatOfPoint2f();
+            contour.convertTo(contour2f, CvType.CV_32F);
+            final double perimeter = Imgproc.arcLength(contour2f, true);
+                            
+            // Circularity = 4*Math.PI*area / perimeter^2
+            // Circle:
+            //      4*pi*(pi*r*r)/(2*pi*r)^2 =
+            //      4*pi*pi*r*r/(4*pi*pi*r*r) = 1
+            //
+            // Square:
+            //      4*pi*d*d/(4*d)^2 =
+            //      4*pi*d*d/(16*d*d) = pi/4 = 0.78
+            final double circularity = 4*Math.PI*area / (perimeter*perimeter);
+            SmartDashboard.putNumber("Circularity", circularity);
+            if (circularity < circularity_min)
+                continue;
+
             // Imgproc.drawContours(frame, contours, i, overlay_bgr);
             // Imgproc.rectangle(frame, bounds.tl(), bounds.br(), overlay_bgr);
 
